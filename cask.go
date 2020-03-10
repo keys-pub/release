@@ -1,16 +1,19 @@
 package main
 
 import (
+	"bytes"
+	"context"
 	"crypto/sha256"
+	"encoding/base64"
 	"encoding/hex"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
 
+	"github.com/google/go-github/v29/github"
 	"github.com/pkg/errors"
 	"github.com/urfave/cli"
 )
@@ -23,32 +26,44 @@ func cmdCask() cli.Command {
 				Name:  "version, v",
 				Usage: "version",
 			},
-			cli.StringFlag{
-				Name:  "in",
-				Usage: "in",
-				Value: ".",
-			},
-			cli.StringFlag{
-				Name:  "out",
-				Usage: "out",
-				Value: filepath.Join(".", "keys.rb"),
-			},
 		},
 		Action: func(c *cli.Context) error {
-			return cask(c.String("version"), c.String("in"), c.String("out"))
+			return cask(c.String("version"))
 		},
 	}
 }
 
-func cask(version string, in string, out string) error {
+func download(url string, file string) error {
+	log.Printf("Downloading %s to %s\n", url, file)
+	resp, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	out, err := os.Create(file)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	_, err = io.Copy(out, resp.Body)
+	return err
+}
+
+func cask(version string) error {
 	if version == "" {
 		return errors.Errorf("no version specified")
 	}
 
-	inFile := fmt.Sprintf("Keys-%s-mac.zip", version)
-	inPath := filepath.Join(in, inFile)
+	file := fmt.Sprintf("Keys-%s-mac.zip", version)
+	url := fmt.Sprintf("https://github.com/keys-pub/app/releases/download/v%s/Keys-%s-mac.zip", version, version)
+	dl := filepath.Join(os.TempDir(), file)
+	if err := download(url, dl); err != nil {
+		return err
+	}
 
-	sha256, err := sha256FileToHex(inPath)
+	sha256, err := sha256FileToHex(dl)
 	if err != nil {
 		return err
 	}
@@ -57,7 +72,7 @@ func cask(version string, in string, out string) error {
     version '%s'
     sha256 '%s'
 
-    url "https://github.com/keys-pub/app/releases/download/v#{version}/Keys-#{version}-mac.zip"
+    url "%s"
     name 'Keys'
     homepage 'https://keys.pub'
 
@@ -76,10 +91,39 @@ func cask(version string, in string, out string) error {
         '~/Library/Preferences/pub.Keys.plist',
     ]
 end
-`, version, sha256)
+`, version, sha256, url)
+	log.Printf("%s:\n", cask)
 
-	log.Printf("Writing %s:\n%s\n", out, cask)
-	if err := ioutil.WriteFile(out, []byte(cask), 0644); err != nil {
+	ctx := context.Background()
+	client, err := newGithubClient(ctx)
+	if err != nil {
+		return err
+	}
+
+	log.Printf("Updating repo...\n")
+	owner := "keys-pub"
+	repo := "homebrew-tap"
+
+	content, _, _, err := client.Repositories.GetContents(ctx, owner, repo, "Casks/keys.rb", &github.RepositoryContentGetOptions{})
+	if err != nil {
+		return err
+	}
+	b, err := base64.StdEncoding.DecodeString(*content.Content)
+	if err != nil {
+		return err
+	}
+	if bytes.Equal(b, []byte(cask)) {
+		log.Printf("Content already exists")
+		return nil
+	}
+
+	msg := fmt.Sprintf("Update Casks/keys.rb (%s)", version)
+	opts := &github.RepositoryContentFileOptions{
+		Message: &msg,
+		Content: []byte(cask),
+		SHA:     content.SHA,
+	}
+	if _, _, err := client.Repositories.UpdateFile(ctx, owner, repo, "Casks/keys.rb", opts); err != nil {
 		return err
 	}
 
