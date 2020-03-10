@@ -135,11 +135,10 @@ func publish(version string, in string) error {
 		opts := &github.UploadOptions{
 			Name: u,
 		}
-		asset, _, err := client.Repositories.UploadReleaseAsset(ctx, owner, repo, id, opts, f)
-		if err != nil {
+		if _, _, err := client.Repositories.UploadReleaseAsset(ctx, owner, repo, id, opts, f); err != nil {
 			return err
 		}
-		log.Printf("Uploaded (%d)\n", *asset.ID)
+		log.Printf("Uploaded\n")
 		f.Close()
 	}
 
