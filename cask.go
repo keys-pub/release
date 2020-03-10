@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"runtime"
 
 	"github.com/google/go-github/v29/github"
 	"github.com/pkg/errors"
@@ -28,6 +29,10 @@ func cmdCask() *cli.Command {
 			},
 		},
 		Action: func(c *cli.Context) error {
+			if runtime.GOOS != "darwin" {
+				log.Printf("Skipping cask...\n")
+				return nil
+			}
 			return cask(c.String("version"))
 		},
 	}

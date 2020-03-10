@@ -23,16 +23,20 @@ func cmdFixBuild() *cli.Command {
 			&cli.StringFlag{
 				Name:  "in",
 				Usage: "in",
+				Value: ".",
 			},
 			&cli.StringFlag{
 				Name:  "out",
 				Usage: "out",
+				Value: ".",
 			},
 		},
 		Action: func(c *cli.Context) error {
 			switch runtime.GOOS {
 			case "darwin":
 				return fixBuildDarwin(c.String("version"), c.String("in"), c.String("out"))
+			case "windows":
+				return fixBuildWindows(c.String("version"), c.String("in"), c.String("out"))
 			default:
 				log.Printf("No fixes required for %s", runtime.GOOS)
 				return nil
@@ -41,20 +45,24 @@ func cmdFixBuild() *cli.Command {
 	}
 }
 
+func fixBuildWindows(version string, in string, out string) error {
+	if version == "" {
+		return errors.Errorf("no version specified")
+	}
+	inFile, outFile := fmt.Sprintf("Keys %s.msi", version), fmt.Sprintf("Keys-%s.msi", version)
+	inPath, outPath := filepath.Join(in, inFile), filepath.Join(out, outFile)
+	log.Printf("Renaming %s to %s\n", inPath, outPath)
+	return os.Rename(inPath, outPath)
+}
+
 func fixBuildDarwin(version string, in string, out string) error {
 	if version == "" {
 		return errors.Errorf("no version specified")
 	}
-	if in == "" {
-		return errors.Errorf("no in specified")
-	}
-	if out == "" {
-		return errors.Errorf("no out specified")
-	}
 
 	zipBase := fmt.Sprintf("Keys-%s-mac.zip", version)
-	appDir := filepath.Dir(in)
-	app := filepath.Base(in)
+	appDir := filepath.Join(in, "mac")
+	app := "Keys.app"
 
 	// Chdir to zip dir
 	cwd, err := os.Getwd()

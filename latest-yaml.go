@@ -53,7 +53,7 @@ func latestYAML(version string, in string, out string) error {
 		inFile = fmt.Sprintf("Keys-%s-mac.zip", version)
 		outFile = "latest-mac.yml"
 	case "windows":
-		inFile = fmt.Sprintf("Keys %s.msi", version)
+		inFile = fmt.Sprintf("Keys-%s.msi", version)
 		outFile = "latest-windows.yml"
 
 	}

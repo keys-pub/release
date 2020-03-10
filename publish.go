@@ -51,7 +51,7 @@ func publish(version string, in string) error {
 		}
 	case "windows":
 		upload = []string{
-			fmt.Sprintf("Keys %s.msi", version),
+			fmt.Sprintf("Keys-%s.msi", version),
 			"latest-windows.yml",
 		}
 	}
