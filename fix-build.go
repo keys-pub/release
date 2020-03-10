@@ -9,22 +9,22 @@ import (
 	"runtime"
 
 	"github.com/pkg/errors"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
-func cmdFixBuild() cli.Command {
-	return cli.Command{
+func cmdFixBuild() *cli.Command {
+	return &cli.Command{
 		Name: "fix-build",
 		Flags: []cli.Flag{
-			cli.StringFlag{
-				Name:  "version, v",
+			&cli.StringFlag{
+				Name:  "version",
 				Usage: "version",
 			},
-			cli.StringFlag{
+			&cli.StringFlag{
 				Name:  "in",
 				Usage: "in",
 			},
-			cli.StringFlag{
+			&cli.StringFlag{
 				Name:  "out",
 				Usage: "out",
 			},

@@ -5,13 +5,13 @@ import (
 	"log"
 	"os"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 const version = "0.1.1"
 
-func cmdVersion() cli.Command {
-	return cli.Command{
+func cmdVersion() *cli.Command {
+	return &cli.Command{
 		Name: "version",
 		Action: func(c *cli.Context) error {
 			fmt.Printf("%s\n", version)
@@ -22,7 +22,7 @@ func cmdVersion() cli.Command {
 
 func main() {
 	app := &cli.App{
-		Commands: []cli.Command{
+		Commands: []*cli.Command{
 			cmdVersion(),
 			cmdDownloadExtra(),
 			cmdFixBuild(),

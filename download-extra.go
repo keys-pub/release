@@ -6,24 +6,24 @@ import (
 	"runtime"
 
 	"github.com/pkg/errors"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 const updaterVersion = "0.1.2"
 
-func cmdDownloadExtra() cli.Command {
-	return cli.Command{
+func cmdDownloadExtra() *cli.Command {
+	return &cli.Command{
 		Name: "download-extra",
 		Flags: []cli.Flag{
-			cli.StringFlag{
-				Name:  "version, v",
+			&cli.StringFlag{
+				Name:  "version",
 				Usage: "version",
 			},
-			cli.StringFlag{
+			&cli.StringFlag{
 				Name:  "out",
 				Usage: "out",
 			},
-			cli.StringFlag{
+			&cli.StringFlag{
 				Name:  "platform",
 				Usage: "platform",
 				Value: runtime.GOOS,

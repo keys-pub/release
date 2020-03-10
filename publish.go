@@ -10,18 +10,18 @@ import (
 
 	"github.com/google/go-github/v29/github"
 	"github.com/pkg/errors"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
-func cmdPublish() cli.Command {
-	return cli.Command{
+func cmdPublish() *cli.Command {
+	return &cli.Command{
 		Name: "publish",
 		Flags: []cli.Flag{
-			cli.StringFlag{
-				Name:  "version, v",
+			&cli.StringFlag{
+				Name:  "version",
 				Usage: "version",
 			},
-			cli.StringFlag{
+			&cli.StringFlag{
 				Name:  "in",
 				Usage: "in",
 				Value: ".",
