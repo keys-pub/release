@@ -16,7 +16,7 @@ func cmdFixBuild() cli.Command {
 	return cli.Command{
 		Name: "fix-build",
 		Flags: []cli.Flag{
-			&cli.StringFlag{
+			cli.StringFlag{
 				Name:  "version, v",
 				Usage: "version",
 			},
