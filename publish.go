@@ -108,7 +108,15 @@ func publish(version string, in string) error {
 	}
 	existing := []string{}
 	for _, a := range assets {
-		existing = append(existing, *a.Name)
+		// log.Printf("Asset: %+v\n", a)
+		if *a.State == "uploaded" {
+			existing = append(existing, *a.Name)
+		} else {
+			log.Printf("Removing incomplete asset %s\n", *a.Name)
+			if _, err := client.Repositories.DeleteReleaseAsset(ctx, owner, repo, *a.ID); err != nil {
+				return err
+			}
+		}
 	}
 
 	for _, u := range upload {
