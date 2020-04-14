@@ -69,14 +69,14 @@ func latestYAML(version string, in string, out string) error {
 		}
 	case "linux":
 		pkgs = []pkg{
-			pkg{
-				In:  fmt.Sprintf("keys_%s_amd64.snap", version),
-				Out: "latest-linux-snap.yml",
-			},
-			pkg{
-				In:  fmt.Sprintf("Keys-%s.AppImage", version),
-				Out: "latest-linux-AppImage.yml",
-			},
+			// pkg{
+			// 	In:  fmt.Sprintf("keys_%s_amd64.snap", version),
+			// 	Out: "latest-linux-snap.yml",
+			// },
+			// pkg{
+			// 	In:  fmt.Sprintf("Keys-%s.AppImage", version),
+			// 	Out: "latest-linux-AppImage.yml",
+			// },
 		}
 	}
 
