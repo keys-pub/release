@@ -41,49 +41,73 @@ func cmdLatestYAML() *cli.Command {
 	}
 }
 
+type pkg struct {
+	In  string
+	Out string
+}
+
 func latestYAML(version string, in string, out string) error {
 	if version == "" {
 		return errors.Errorf("no version specified")
 	}
 
-	var inFile string
-	var outFile string
+	var pkgs []pkg
 	switch runtime.GOOS {
 	case "darwin":
-		inFile = fmt.Sprintf("Keys-%s-mac.zip", version)
-		outFile = "latest-mac.yml"
+		pkgs = []pkg{
+			pkg{
+				In:  fmt.Sprintf("Keys-%s-mac.zip", version),
+				Out: "latest-mac.yml",
+			},
+		}
 	case "windows":
-		inFile = fmt.Sprintf("Keys-%s.msi", version)
-		outFile = "latest-windows.yml"
-
+		pkgs = []pkg{
+			pkg{
+				In:  fmt.Sprintf("Keys-%s.msi", version),
+				Out: "latest-windows.yml",
+			},
+		}
+	case "linux":
+		pkgs = []pkg{
+			pkg{
+				In:  fmt.Sprintf("keys_%s_amd64.snap", version),
+				Out: "latest-linux-snap.yml",
+			},
+			pkg{
+				In:  fmt.Sprintf("Keys-%s.AppImage", version),
+				Out: "latest-linux-AppImage.yml",
+			},
+		}
 	}
 
-	inPath := filepath.Join(in, inFile)
-	outPath := filepath.Join(out, outFile)
+	for _, pkg := range pkgs {
+		inPath := filepath.Join(in, pkg.In)
+		outPath := filepath.Join(out, pkg.Out)
 
-	f, err := os.Open(inPath)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	hasher := sha512.New()
-	if _, err := io.Copy(hasher, f); err != nil {
-		log.Fatal(err)
-	}
-	encoded := base64.StdEncoding.EncodeToString(hasher.Sum(nil))
+		f, err := os.Open(inPath)
+		if err != nil {
+			return err
+		}
+		defer f.Close()
+		hasher := sha512.New()
+		if _, err := io.Copy(hasher, f); err != nil {
+			log.Fatal(err)
+		}
+		encoded := base64.StdEncoding.EncodeToString(hasher.Sum(nil))
 
-	sha512 := encoded
-	releaseDate := time.Now().Format(time.RFC3339)
+		sha512 := encoded
+		releaseDate := time.Now().Format(time.RFC3339)
 
-	s := fmt.Sprintf(`version: %s
+		s := fmt.Sprintf(`version: %s
 path: %s
 sha512: %s
 releaseDate: '%s'
-`, version, inFile, sha512, releaseDate)
+`, version, pkg.In, sha512, releaseDate)
 
-	log.Printf("Writing %s:\n%s\n", outPath, s)
-	if err := ioutil.WriteFile(outPath, []byte(s), 0644); err != nil {
-		return err
+		log.Printf("Writing %s:\n%s\n", outPath, s)
+		if err := ioutil.WriteFile(outPath, []byte(s), 0644); err != nil {
+			return err
+		}
 	}
 
 	return nil
