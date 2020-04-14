@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"runtime"
 
 	"github.com/pkg/errors"
@@ -46,16 +47,40 @@ func downloadExtra(version string, platform string, out string) error {
 	keysURLString := fmt.Sprintf("https://github.com/keys-pub/keysd/releases/download/v%s/%s", version, keysFile)
 
 	log.Printf("Extracting %s\n", keysURLString)
-	if err := extractURL(keysURLString, out, skip); err != nil {
+	files, err := extractURL(keysURLString, out, skip)
+	if err != nil {
 		return err
+	}
+
+	if runtime.GOOS == "linux" {
+		if err := makeExecutable(files); err != nil {
+			return err
+		}
 	}
 
 	updaterFile := fmt.Sprintf("updater_%s_%s_x86_64.tar.gz", updaterVersion, platform)
 	updaterURLString := fmt.Sprintf("https://github.com/keys-pub/updater/releases/download/v%s/%s", updaterVersion, updaterFile)
 	log.Printf("Extracting %s\n", updaterURLString)
-	if err := extractURL(updaterURLString, out, skip); err != nil {
+	files, err = extractURL(updaterURLString, out, skip)
+	if err != nil {
 		return err
 	}
 
+	if runtime.GOOS == "linux" {
+		if err := makeExecutable(files); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func makeExecutable(paths []string) error {
+	for _, p := range paths {
+		log.Printf("chmod 0755 %s\n", p)
+		if err := os.Chmod(p, 0755); err != nil {
+			return err
+		}
+	}
 	return nil
 }
