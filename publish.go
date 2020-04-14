@@ -54,6 +54,13 @@ func publish(version string, in string) error {
 			fmt.Sprintf("Keys-%s.msi", version),
 			"latest-windows.yml",
 		}
+	case "linux":
+		upload = []string{
+			fmt.Sprintf("keys_%s_amd64.snap", version),
+			"latest-linux-snap.yml",
+			fmt.Sprintf("Keys-%s.AppImage", version),
+			"latest-linux-AppImage.yml",
+		}
 	}
 
 	ctx := context.Background()
