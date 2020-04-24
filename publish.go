@@ -116,6 +116,11 @@ func publish(version string, in string) error {
 		if *a.State == "uploaded" {
 			existing = append(existing, *a.Name)
 		} else {
+			// Only remove incomplete assets for this platform
+			if !contains(filepath.Base(*a.Name), upload) {
+				log.Printf("Skipping incomplete asset %s", *a.Name)
+				continue
+			}
 			log.Printf("Removing incomplete asset %s\n", *a.Name)
 			if _, err := client.Repositories.DeleteReleaseAsset(ctx, owner, repo, *a.ID); err != nil {
 				return err
