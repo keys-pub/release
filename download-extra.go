@@ -47,13 +47,12 @@ func downloadExtra(version string, platform string, out string) error {
 	keysURLString := fmt.Sprintf("https://github.com/keys-pub/keysd/releases/download/v%s/%s", version, keysFile)
 
 	log.Printf("Extracting %s\n", keysURLString)
-	files, err := extractURL(keysURLString, out, skip)
-	if err != nil {
+	if _, err := extractURL(keysURLString, out, skip); err != nil {
 		return err
 	}
 
 	if runtime.GOOS == "linux" {
-		if err := makeExecutable(files); err != nil {
+		if err := makeExecutable([]string{"bin/keys", "bin/keysd"}); err != nil {
 			return err
 		}
 	}
@@ -61,13 +60,12 @@ func downloadExtra(version string, platform string, out string) error {
 	updaterFile := fmt.Sprintf("updater_%s_%s_x86_64.tar.gz", updaterVersion, platform)
 	updaterURLString := fmt.Sprintf("https://github.com/keys-pub/updater/releases/download/v%s/%s", updaterVersion, updaterFile)
 	log.Printf("Extracting %s\n", updaterURLString)
-	files, err = extractURL(updaterURLString, out, skip)
-	if err != nil {
+	if _, err := extractURL(updaterURLString, out, skip); err != nil {
 		return err
 	}
 
 	if runtime.GOOS == "linux" {
-		if err := makeExecutable(files); err != nil {
+		if err := makeExecutable([]string{"bin/updater"}); err != nil {
 			return err
 		}
 	}
