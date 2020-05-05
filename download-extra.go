@@ -11,7 +11,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-const updaterVersion = "0.1.7"
+const updaterVersion = "0.1.8"
 
 func cmdDownloadExtra() *cli.Command {
 	return &cli.Command{
