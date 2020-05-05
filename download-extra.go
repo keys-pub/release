@@ -56,7 +56,7 @@ func downloadExtra(version string, platform string, out string) error {
 		return err
 	}
 
-	if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
+	if runtime.GOOS == "linux" {
 		if err := makeExecutable([]string{filepath.Join(out, "keys"), filepath.Join(out, "keysd")}); err != nil {
 			return err
 		}
@@ -69,7 +69,7 @@ func downloadExtra(version string, platform string, out string) error {
 		return err
 	}
 
-	if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
+	if runtime.GOOS == "linux" {
 		if err := makeExecutable([]string{filepath.Join(out, "updater")}); err != nil {
 			return err
 		}
