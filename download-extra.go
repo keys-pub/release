@@ -51,7 +51,7 @@ func downloadExtra(version string, platform string, out string) error {
 		return err
 	}
 
-	if runtime.GOOS == "linux" {
+	if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
 		if err := makeExecutable([]string{"bin/keys", "bin/keysd"}); err != nil {
 			return err
 		}
@@ -64,7 +64,7 @@ func downloadExtra(version string, platform string, out string) error {
 		return err
 	}
 
-	if runtime.GOOS == "linux" {
+	if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
 		if err := makeExecutable([]string{"bin/updater"}); err != nil {
 			return err
 		}
