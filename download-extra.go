@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"runtime"
 
 	"github.com/pkg/errors"
@@ -46,13 +47,17 @@ func downloadExtra(version string, platform string, out string) error {
 	keysFile := fmt.Sprintf("keys_%s_%s_x86_64.tar.gz", version, platform)
 	keysURLString := fmt.Sprintf("https://github.com/keys-pub/keysd/releases/download/v%s/%s", version, keysFile)
 
+	if out == "" {
+		out = "."
+	}
+
 	log.Printf("Extracting %s\n", keysURLString)
 	if _, err := extractURL(keysURLString, out, skip); err != nil {
 		return err
 	}
 
 	if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
-		if err := makeExecutable([]string{"bin/keys", "bin/keysd"}); err != nil {
+		if err := makeExecutable([]string{filepath.Join(out, "keys"), filepath.Join(out, "keysd")}); err != nil {
 			return err
 		}
 	}
@@ -65,7 +70,7 @@ func downloadExtra(version string, platform string, out string) error {
 	}
 
 	if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
-		if err := makeExecutable([]string{"bin/updater"}); err != nil {
+		if err := makeExecutable([]string{filepath.Join(out, "updater")}); err != nil {
 			return err
 		}
 	}
