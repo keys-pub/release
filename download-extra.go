@@ -62,6 +62,18 @@ func downloadExtra(version string, platform string, out string) error {
 		}
 	}
 
+	fido2File := fmt.Sprintf("fido2_%s_%s_x86_64.tar.gz", version, platform)
+	fido2URLString := fmt.Sprintf("https://github.com/keys-pub/keysd/releases/download/v%s/%s", version, fido2File)
+
+	if out == "" {
+		out = "."
+	}
+
+	log.Printf("Extracting %s\n", fido2URLString)
+	if _, err := extractURL(fido2URLString, out, skip); err != nil {
+		return err
+	}
+
 	updaterFile := fmt.Sprintf("updater_%s_%s_x86_64.tar.gz", updaterVersion, platform)
 	updaterURLString := fmt.Sprintf("https://github.com/keys-pub/updater/releases/download/v%s/%s", updaterVersion, updaterFile)
 	log.Printf("Extracting %s\n", updaterURLString)
