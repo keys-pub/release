@@ -30,7 +30,7 @@ func extractURL(url string, out string, skip []string) ([]string, error) {
 	if out == "" {
 		out = "."
 	}
-	if err := os.MkdirAll(out, 755); err != nil {
+	if err := os.MkdirAll(out, 0755); err != nil {
 		return nil, err
 	}
 
