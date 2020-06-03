@@ -45,7 +45,7 @@ func downloadExtra(version string, platform string, out string) error {
 	skip := []string{"README.md", "LICENSE"}
 
 	keysFile := fmt.Sprintf("keys_%s_%s_x86_64.tar.gz", version, platform)
-	keysURLString := fmt.Sprintf("https://github.com/keys-pub/keysd/releases/download/v%s/%s", version, keysFile)
+	keysURLString := fmt.Sprintf("https://github.com/keys-pub/keys-ext/releases/download/v%s/%s", version, keysFile)
 
 	if out == "" {
 		out = "."
@@ -62,9 +62,9 @@ func downloadExtra(version string, platform string, out string) error {
 		}
 	}
 
-	if runtime.GOOS == "darwin" {
+	if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
 		fido2File := fmt.Sprintf("fido2_%s_%s_x86_64.tar.gz", version, platform)
-		fido2URLString := fmt.Sprintf("https://github.com/keys-pub/keysd/releases/download/v%s/%s", version, fido2File)
+		fido2URLString := fmt.Sprintf("https://github.com/keys-pub/keys-ext/releases/download/v%s/%s", version, fido2File)
 
 		if out == "" {
 			out = "."
