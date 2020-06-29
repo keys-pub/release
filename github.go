@@ -12,7 +12,10 @@ import (
 func newGithubClient(ctx context.Context) (*github.Client, error) {
 	token := os.Getenv("GITHUB_TOKEN")
 	if token == "" {
-		return nil, errors.Errorf("no GITHUB_TOKEN set")
+		token = os.Getenv("GH_TOKEN")
+	}
+	if token == "" {
+		return nil, errors.Errorf("no GITHUB_TOKEN or GH_TOKEN set")
 	}
 
 	ts := oauth2.StaticTokenSource(
