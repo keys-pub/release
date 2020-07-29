@@ -8,13 +8,13 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-const version = "0.1.1"
+const toolVersion = "0.1.2"
 
 func cmdVersion() *cli.Command {
 	return &cli.Command{
 		Name: "version",
 		Action: func(c *cli.Context) error {
-			fmt.Printf("%s\n", version)
+			fmt.Printf("%s\n", toolVersion)
 			return nil
 		},
 	}
@@ -29,6 +29,8 @@ func main() {
 			cmdLatestYAML(),
 			cmdPublish(),
 			cmdCask(),
+			cmdBrew(),
+			cmdScoop(),
 		},
 	}
 
