@@ -24,7 +24,7 @@ func cmdPublish() *cli.Command {
 			&cli.StringFlag{
 				Name:  "in",
 				Usage: "in",
-				Value: ".",
+				Value: "release",
 			},
 			&cli.StringFlag{
 				Name:  "platform",

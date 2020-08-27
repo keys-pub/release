@@ -24,6 +24,7 @@ func cmdDownloadExtra() *cli.Command {
 			&cli.StringFlag{
 				Name:  "out",
 				Usage: "out",
+				Value: "bin",
 			},
 			&cli.StringFlag{
 				Name:  "platform",

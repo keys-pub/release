@@ -23,12 +23,12 @@ func cmdFixBuild() *cli.Command {
 			&cli.StringFlag{
 				Name:  "in",
 				Usage: "in",
-				Value: ".",
+				Value: "release",
 			},
 			&cli.StringFlag{
 				Name:  "out",
 				Usage: "out",
-				Value: ".",
+				Value: "release",
 			},
 			&cli.StringFlag{
 				Name:  "platform",
