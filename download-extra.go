@@ -32,12 +32,12 @@ func cmdDownloadExtra() *cli.Command {
 			},
 		},
 		Action: func(c *cli.Context) error {
-			return downloadExtra(c.String("version"), c.String("platform"), c.String("out"))
+			return downloadExtra(c.String("platform"), c.String("version"), c.String("out"))
 		},
 	}
 }
 
-func downloadExtra(version string, platform string, out string) error {
+func downloadExtra(platform string, version string, out string) error {
 	if version == "" {
 		return errors.Errorf("no version specified")
 	}

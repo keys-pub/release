@@ -26,14 +26,19 @@ func cmdPublish() *cli.Command {
 				Usage: "in",
 				Value: ".",
 			},
+			&cli.StringFlag{
+				Name:  "platform",
+				Usage: "platform",
+				Value: runtime.GOOS,
+			},
 		},
 		Action: func(c *cli.Context) error {
-			return publish(c.String("version"), c.String("in"))
+			return publish(c.String("platform"), c.String("version"), c.String("in"))
 		},
 	}
 }
 
-func publish(version string, in string) error {
+func publish(platform string, version string, in string) error {
 	if version == "" {
 		return errors.Errorf("no version specified")
 	}
@@ -42,7 +47,7 @@ func publish(version string, in string) error {
 	repo := "app"
 	var upload []string
 
-	switch runtime.GOOS {
+	switch platform {
 	case "darwin":
 		upload = []string{
 			fmt.Sprintf("Keys-%s-mac.zip", version),
@@ -57,6 +62,7 @@ func publish(version string, in string) error {
 	case "linux":
 		upload = []string{
 			fmt.Sprintf("Keys-%s.AppImage", version),
+			"latest-linux.yml",
 		}
 	}
 

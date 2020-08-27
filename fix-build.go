@@ -30,9 +30,14 @@ func cmdFixBuild() *cli.Command {
 				Usage: "out",
 				Value: ".",
 			},
+			&cli.StringFlag{
+				Name:  "platform",
+				Usage: "platform",
+				Value: runtime.GOOS,
+			},
 		},
 		Action: func(c *cli.Context) error {
-			switch runtime.GOOS {
+			switch c.String("platform") {
 			case "darwin":
 				return fixBuildDarwin(c.String("version"), c.String("in"), c.String("out"))
 			case "windows":

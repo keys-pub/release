@@ -34,9 +34,14 @@ func cmdLatestYAML() *cli.Command {
 				Usage: "out",
 				Value: ".",
 			},
+			&cli.StringFlag{
+				Name:  "platform",
+				Usage: "platform",
+				Value: runtime.GOOS,
+			},
 		},
 		Action: func(c *cli.Context) error {
-			return latestYAML(c.String("version"), c.String("in"), c.String("out"))
+			return latestYAML(c.String("platform"), c.String("version"), c.String("in"), c.String("out"))
 		},
 	}
 }
@@ -46,13 +51,13 @@ type pkg struct {
 	Out string
 }
 
-func latestYAML(version string, in string, out string) error {
+func latestYAML(platform string, version string, in string, out string) error {
 	if version == "" {
 		return errors.Errorf("no version specified")
 	}
 
 	var pkgs []pkg
-	switch runtime.GOOS {
+	switch platform {
 	case "darwin":
 		pkgs = []pkg{
 			pkg{
@@ -69,14 +74,10 @@ func latestYAML(version string, in string, out string) error {
 		}
 	case "linux":
 		pkgs = []pkg{
-			// pkg{
-			// 	In:  fmt.Sprintf("keys_%s_amd64.snap", version),
-			// 	Out: "latest-linux-snap.yml",
-			// },
-			// pkg{
-			// 	In:  fmt.Sprintf("Keys-%s.AppImage", version),
-			// 	Out: "latest-linux-AppImage.yml",
-			// },
+			pkg{
+				In:  fmt.Sprintf("Keys-%s.AppImage", version),
+				Out: "latest-linux.yml",
+			},
 		}
 	}
 
